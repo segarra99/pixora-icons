@@ -14,36 +14,36 @@
   <g
      id="layer1">
     <path
-       id="rect1"
+       id="rect2"
        style="fill:#3e3546;stroke-width:0.022"
-       d="M 2,1 V 2 H 1 v 1 1 1 1 1 1 1 1 1 1 1 1 H 2 V 13 12 11 10 9 8 7 6 5 4 3 H 3 V 2 h 1 1 1 1 1 1 1 1 1 1 1 V 1 H 13 12 11 10 9 8 7 6 5 4 3 Z m 12,1 v 1 1 1 1 1 1 1 1 1 1 1 1 h 1 V 13 12 11 10 9 8 7 6 5 4 3 2 Z m 0,12 H 13 12 11 10 9 8 7 6 5 4 3 2 v 1 h 1 1 1 1 1 1 1 1 1 1 1 1 z" />
+       d="m 0,0 v 16 h 1 14 1 V 0 H 15 1 Z M 1,1 H 15 V 15 H 1 Z" />
+    <path
+       id="rect6"
+       style="fill:#966c6c;stroke-width:0.022"
+       d="m 1,14 v 1 h 14 v -1 z" />
+    <path
+       id="rect7"
+       style="fill:#e3c896;stroke-width:0.022"
+       d="M 1,1 V 2 H 15 V 1 Z" />
+    <path
+       id="rect8"
+       style="fill:#ab947a;stroke-width:0.022"
+       d="M 1,2 V 14 H 2 V 2 Z m 13,0 v 12 h 1 V 2 Z" />
+    <path
+       id="rect10"
+       style="fill:#484a77;stroke-width:0.022"
+       d="M 4,5 V 6 H 5 V 5 Z M 5,6 V 7 H 6 V 6 Z M 5,7 H 4 V 8 H 5 Z M 7,7 V 8 H 8 9 V 7 H 8 Z m -5,6 v 1 h 12 v -1 z" />
+    <path
+       id="rect11"
+       style="fill:#4d65b4;stroke-width:0.022"
+       d="m 2,2 v 1 1 8 1 H 14 V 12 4 3 2 Z m 3,1 h 3 v 1 h 1 v 1 h 1 v 1 5 H 8 V 10 H 7 v 1 H 6 V 10 H 5 v 1 H 3 V 5 H 4 V 4 h 1 z" />
     <path
        id="rect52"
-       style="fill:#e3c896;stroke-width:0.022"
-       d="m 2,2 v 1 h 1 1 1 1 1 1 1 1 1 1 1 1 V 2 H 13 12 11 10 9 8 7 6 5 4 3 Z" />
-    <path
-       id="rect66"
-       style="fill:#ab947a;stroke-width:0.022"
-       d="m 2,3 v 1 1 1 1 1 1 1 1 1 1 H 3 V 12 11 10 9 8 7 6 5 4 3 Z m 11,0 v 1 1 1 1 1 1 1 1 1 1 h 1 V 12 11 10 9 8 7 6 5 4 3 Z" />
-    <path
-       id="rect88"
-       style="fill:#966c6c;stroke-width:0.022"
-       d="m 2,13 v 1 h 1 1 1 1 1 1 1 1 1 1 1 1 V 13 H 13 12 11 10 9 8 7 6 5 4 3 Z" />
-    <path
-       id="rect101"
-       style="fill:#484a77;stroke-width:0.022"
-       d="M 5,6 V 7 H 6 V 6 Z M 6,7 V 8 H 7 V 7 Z M 6,8 H 5 v 1 h 1 z m 2,0 v 1 h 1 1 V 8 H 9 Z m -5,4 v 1 h 1 1 1 1 1 1 1 1 1 1 V 12 H 12 11 10 9 8 7 6 5 4 Z" />
-    <path
-       id="rect111"
-       style="fill:#4d65b4;stroke-width:0.022"
-       d="m 3,3 v 1 1 1 1 1 1 1 1 1 h 1 1 1 1 1 1 1 1 1 1 V 11 10 9 8 7 6 5 4 3 H 12 11 10 9 8 7 6 5 4 Z m 3,1 h 1 1 1 v 1 h 1 v 1 h 1 v 1 1 1 1 1 H 10 9 V 10 H 8 v 1 H 7 V 10 H 6 v 1 H 5 4 V 10 9 8 7 6 H 5 V 5 h 1 z" />
-    <path
-       id="rect161"
        style="fill:#8fd3ff;stroke-width:0.022"
-       d="m 4,10 v 1 H 5 6 V 10 H 5 Z m 3,0 v 1 h 1 v -1 z m 2,0 v 1 h 1 1 v -1 h -1 z" />
+       d="m 3,10 v 1 h 2 v -1 z m 3,0 v 1 h 1 v -1 z m 2,0 v 1 h 2 v -1 z" />
     <path
-       id="rect171"
+       id="rect60"
        style="fill:#ffffff;stroke-width:0.022"
-       d="M 6,4 V 5 H 5 V 6 H 6 V 7 H 7 V 8 H 6 V 9 H 5 V 8 H 6 V 7 H 5 V 6 H 4 v 1 1 1 1 h 1 1 1 1 1 1 1 V 9 8 7 6 H 10 V 5 H 9 V 4 H 8 7 Z m 2,4 h 1 1 V 9 H 9 8 Z" />
+       d="M 5,3 V 4 H 4 V 5 H 5 V 6 H 6 V 7 H 5 V 8 H 4 V 7 H 5 V 6 H 4 V 5 H 3 v 1 1 1 1 1 h 1 1 1 1 1 1 1 V 9 8 7 6 5 H 9 V 4 H 8 V 3 H 7 6 Z M 7,7 H 8 9 V 8 H 8 7 Z" />
   </g>
 </svg>
