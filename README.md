@@ -42,7 +42,7 @@ A pixel-style icon theme for Linux desktop systems that aims to be as faithful a
 ### Arch Linux
 Using `shelly`:
 ```bash
-shelly aur install pixora-icons-git
+shelly install aur pixora-icons-git
 ```
 Using `paru`:
 ```bash
