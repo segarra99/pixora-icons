@@ -1,75 +1,101 @@
 #!/usr/bin/env bash
-SRC_DIR="$PWD/16x16"
-OUT_DIR="$PWD/svg"
-TMP_DIR="$PWD/tmp-512"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+set -euo pipefail
 
-mkdir -p "$OUT_DIR"
-mkdir -p "$TMP_DIR"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+SRC_DIR="$SCRIPT_DIR/16x16"
+OUT_DIR="$SCRIPT_DIR/svg"
 
-# Step 1: upscale all PNGs in parallel (recursive search across subdirectories)
-# The relative subdir path is encoded into the tmp filename as a prefix (slashes → __SLASH__)
-# so we can reconstruct the output path later without losing structure.
-upscale() {
-    img="$1"
-    SRC_DIR="$2"
-    TMP_DIR="$3"
-    rel="${img#$SRC_DIR/}"           # e.g. "icons/arrow.png"
-    name="${rel%.png}"               # e.g. "icons/arrow"
-    flat="${name//\//__SLASH__}"     # e.g. "icons__SLASH__arrow"
-    magick "$img" -filter point -resize 512x512 "$TMP_DIR/$flat-512.png"
+for tool in bash parallel magick vtracer python3 scour; do
+    if ! command -v "$tool" >/dev/null 2>&1; then
+        echo "Missing dependency: $tool" >&2
+        exit 1
+    fi
+done
+
+PYTHON="$(command -v python3)"
+if ! "$PYTHON" -c 'from lxml import etree'; then
+    echo 'Python needs lxml. Use python3.withPackages (ps: [ ps.lxml ]) in Nix.' >&2
+    exit 1
+fi
+
+[[ -d "$SRC_DIR" ]] || {
+    echo "Missing source directory: $SRC_DIR" >&2
+    exit 1
 }
-export -f upscale
-mapfile -t png_files < <(find "$SRC_DIR" -type f -name "*.png")
-parallel --eta --bar upscale {} "$SRC_DIR" "$TMP_DIR" ::: "${png_files[@]}"
 
-# Step 2: trace all upscaled PNGs in parallel
-trace() {
-    upscaled="$1"
-    TMP_DIR="$2"
-    name=$(basename "${upscaled%-512.png}")
+[[ -f "$SCRIPT_DIR/svgfit.py" ]] || {
+    echo 'Missing svgfit.py beside this script.' >&2
+    exit 1
+}
+
+TMP_DIR="$(mktemp -d "$SCRIPT_DIR/tmp-512.XXXXXX")"
+
+cleanup() {
+    local status=$?
+    if (( status == 0 )); then
+        rm -rf -- "$TMP_DIR"
+    else
+        echo "Failed. Intermediate files preserved in: $TMP_DIR" >&2
+    fi
+}
+trap cleanup EXIT
+
+find "$SRC_DIR" -type f -name '*.png' -print0 > "$TMP_DIR/inputs"
+
+if [[ ! -s "$TMP_DIR/inputs" ]]; then
+    echo "No PNG files found in: $SRC_DIR" >&2
+    exit 1
+fi
+
+mkdir -p -- "$OUT_DIR"
+
+process_image() {
+    # Parallel runs each job in a separate shell.
+    set -euo pipefail
+
+    local img="$1" rel base output
+    rel="${img#"$SRC_DIR"/}"
+    base="$TMP_DIR/${rel%.png}"
+    output="$OUT_DIR/${rel%.png}.svg"
+
+    mkdir -p -- "$(dirname -- "$base")" "$(dirname -- "$output")"
+
+    # Upscale using nearest-neighbor interpolation.
+    magick "$img" -filter point -resize 512x512 "$base-512.png"
+
+    # Trace the upscaled image.
     vtracer \
-        --input "$upscaled" \
-        --output "$TMP_DIR/$name-traced.svg" \
+        --input "$base-512.png" \
+        --output "$base-traced.svg" \
         --colormode color \
         --hierarchical cutout \
         --mode pixel
-    sed -i 's/<svg /<svg shape-rendering="crispEdges" /' "$TMP_DIR/$name-traced.svg"
-}
-export -f trace
-parallel --eta --bar trace {} "$TMP_DIR" ::: "$TMP_DIR"/*-512.png
 
-# Step 3: fit viewBox to actual visible content in parallel
-fit() {
-    traced="$1"
-    TMP_DIR="$2"
-    SCRIPT_DIR="$3"
-    name=$(basename "${traced%-traced.svg}")
-    python3 "$SCRIPT_DIR/svgfit.py" "$traced" "$TMP_DIR/$name-fit.svg"
-}
-export -f fit
-parallel --eta --bar fit {} "$TMP_DIR" "$SCRIPT_DIR" ::: "$TMP_DIR"/*-traced.svg
+    sed -i 's/<svg /<svg shape-rendering="crispEdges" /' \
+        "$base-traced.svg"
 
-# Step 4: clean with scour in parallel, restoring subdirectory structure under svg/
-clean() {
-    fit="$1"
-    OUT_DIR="$2"
-    flat=$(basename "${fit%-fit.svg}")              # e.g. "icons__SLASH__arrow"
-    rel="${flat//__SLASH__/\/}"                     # e.g. "icons/arrow"
-    out_path="$OUT_DIR/$rel.svg"                    # e.g. "svg/icons/arrow.svg"
-    mkdir -p "$(dirname "$out_path")"
+    # Fit the SVG to its visible content.
+    "$PYTHON" "$SCRIPT_DIR/svgfit.py" \
+        "$base-traced.svg" "$base-fit.svg"
+
+    # Optimize before publishing the finished file.
     scour \
-        -i "$fit" \
-        -o "$out_path" \
+        -i "$base-fit.svg" \
+        -o "$base-clean.svg" \
         --enable-id-stripping \
         --enable-comment-stripping \
         --shorten-ids \
         --indent=none \
         >/dev/null
-}
-export -f clean
-parallel --eta --bar clean {} "$OUT_DIR" ::: "$TMP_DIR"/*-fit.svg
 
-# deleting temporary files
-rm -rf "$TMP_DIR"
+    mv -- "$base-clean.svg" "$output"
+}
+
+export SCRIPT_DIR SRC_DIR OUT_DIR TMP_DIR PYTHON
+export PARALLEL_SHELL="$(command -v bash)"
+export -f process_image
+
+parallel --null --halt soon,fail=1 --eta --bar \
+    process_image {} :::: "$TMP_DIR/inputs"
+
 echo "Done. SVGs saved in $OUT_DIR"
