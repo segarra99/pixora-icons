@@ -90,7 +90,11 @@ When drawing the glyph of any app, try to think which portion of the whole image
 
 ## Vectorizing
 
-Every app icon should be vectorized. Reason being, I think it's way easier to, in this project's case, make every icon a vector and set the  to `scalable`, than having to make 16, 24, 32, 64px and so on versions of every single icon. The entire vectorizing process is automated by a shell script, so it should be a walk in the park. 
+Every app icon should be vectorized so it scales to different sizes without needing separate files.
+
+[Aseprite](https://www.aseprite.org/) can export your artwork directly as a vector `.svg`, making it a great choice for drawing icons for the theme! If you have it, you can skip the scripts.
+
+If you don't have Aseprite, follow the tutorial below to convert your PNGs to SVG using the provided scripts.
 
 ### Tutorial:
 
@@ -116,7 +120,7 @@ Start from an existing folder on the **16x16 grid** and keep its shape. Use `#E3
 >[!Note]
 > You'll need Python 3.9 or newer. If the script cannot adapt a new folder, its conversion rules need to be updated in `scripts/generate-accent.py`. Make changes there and in the original artwork, then regenerate the Accent files.
 
-1. Draw and vectorize the icon following the tutorial above;
+1. Draw and vectorize the icon following the instructions above;
 2. Save the PNG as `pixora/16/places/folder-<name>.png` and the SVG as `pixora/scalable/places/folder-<name>.svg`;
 3. Add alternate icon names as relative symlinks in `pixora/scalable/`. The script will create their Accent versions too;
 4. From the repository root, run `python3 scripts/generate-accent.py`, then `python3 scripts/generate-accent.py --check`;
